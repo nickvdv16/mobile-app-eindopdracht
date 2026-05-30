@@ -2,6 +2,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import HomeScreen from "./screens/HomeScreen.js";
+import WebshopScreen from "./screens/WebshopScreen.js";
 import ProductDetailsScreen from "./screens/ProductDetailsScreen.js";
 import NewsDetailsScreen from "./screens/NewsDetailsScreen.js";
 import CampusDetailsScreen from "./screens/CampusDetailsScreen.js";
@@ -15,6 +16,12 @@ export default function App() {
         <Stack.Screen
           name="Home"
           component={HomeScreen}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="Webshop"
+          component={WebshopScreen}
           options={{ headerShown: false }}
         />
 

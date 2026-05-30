@@ -12,9 +12,11 @@ import {
 import ProductCard from "../components/ProductCard.js";
 import NewsCard from "../components/NewsCard.js";
 import CampusCard from "../components/CampusCard.js";
+import AppHeader from "../components/AppHeader.js";
 
 const HomeScreen = ({ navigation }) => {
-  const API_TOKEN = "90676b2c8c33d03684a2724fe323fcca0de28c427e0faec060139a9135a0b248";
+  const API_TOKEN =
+    "90676b2c8c33d03684a2724fe323fcca0de28c427e0faec060139a9135a0b248";
 
   const [selectedCampusFilter, setSelectedCampusFilter] =
     useState("Alle Opleidingen");
@@ -253,17 +255,7 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <ScrollView style={styles.page}>
-      <View style={styles.header}>
-        <Image
-          source={require("../assets/ba-logo.png")}
-          style={styles.logo}
-          resizeMode="contain"
-        />
-
-        <TouchableOpacity style={styles.menuButton}>
-          <Text style={styles.menuIcon}>☰</Text>
-        </TouchableOpacity>
-      </View>
+      <AppHeader navigation={navigation} />
 
       <View style={styles.heroSection}>
         <Text style={styles.heroTitle}>Jouw toekomst begint hier</Text>
@@ -505,6 +497,15 @@ const HomeScreen = ({ navigation }) => {
             onPress={() => navigation.navigate("ProductDetails", product)}
           />
         ))}
+
+        <TouchableOpacity
+          style={styles.viewAllProductsButton}
+          onPress={() => navigation.navigate("Webshop")}
+        >
+          <Text style={styles.viewAllProductsButtonText}>
+            Bekijk alle producten
+          </Text>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.newsSection}>
@@ -634,30 +635,6 @@ const styles = StyleSheet.create({
   page: {
     flex: 1,
     backgroundColor: "#000000",
-  },
-
-  header: {
-    backgroundColor: "#ffffff",
-    paddingTop: 55,
-    paddingBottom: 18,
-    paddingHorizontal: 24,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-
-  logo: {
-    width: 210,
-    height: 45,
-  },
-
-  menuButton: {
-    padding: 8,
-  },
-
-  menuIcon: {
-    fontSize: 30,
-    color: "#111111",
   },
 
   heroSection: {
@@ -916,6 +893,22 @@ const styles = StyleSheet.create({
     fontSize: 17,
     lineHeight: 26,
     marginBottom: 34,
+  },
+
+  viewAllProductsButton: {
+    backgroundColor: "#86BC25",
+    width: "100%",
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderRadius: 9,
+    alignItems: "center",
+    marginTop: 10,
+  },
+
+  viewAllProductsButtonText: {
+    color: "#111111",
+    fontSize: 15,
+    fontWeight: "700",
   },
 
   newsSection: {

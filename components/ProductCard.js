@@ -1,80 +1,105 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 
-const ProductCard = ({ image, name, description, price, category, onPress }) => {
+const ProductCard = ({
+  name,
+  description,
+  price,
+  category,
+  image,
+  onPress,
+}) => {
   return (
-    <View style={styles.card}>
-      <Image source={{ uri: image }} style={styles.image} />
+    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.85}>
+      <Image source={{ uri: image }} style={styles.image} resizeMode="cover" />
 
       <View style={styles.content}>
         <Text style={styles.category}>{category}</Text>
 
-        <Text style={styles.title}>{name}</Text>
+        <Text style={styles.name}>{name}</Text>
 
         <Text style={styles.description}>{description}</Text>
 
-        <Text style={styles.price}>€ {Number(price).toFixed(2)}</Text>
+        <Text style={styles.price}>$ {price.toFixed(2)} USD</Text>
 
         <TouchableOpacity style={styles.button} onPress={onPress}>
-          <Text style={styles.buttonText}>Bekijk product</Text>
+          <Text style={styles.buttonText}>check out item</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   card: {
     backgroundColor: "#ffffff",
-    borderRadius: 16,
-    marginBottom: 18,
+    borderRadius: 14,
+    marginBottom: 26,
     overflow: "hidden",
     borderWidth: 1,
-    borderColor: "#e5e5e5",
+    borderColor: "#dddddd",
   },
+
   image: {
     width: "100%",
-    height: 170,
-    resizeMode: "cover",
+    height: 230,
   },
+
   content: {
-    padding: 16,
+    padding: 22,
   },
+
   category: {
+    alignSelf: "flex-start",
+    backgroundColor: "#eeeeee",
+    color: "#111111",
     fontSize: 12,
-    color: "#86BC25",
     fontWeight: "700",
-    marginBottom: 6,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    marginBottom: 14,
     textTransform: "uppercase",
   },
-  title: {
-    fontSize: 20,
+
+  name: {
     color: "#111111",
+    fontSize: 24,
     fontWeight: "700",
-    marginBottom: 6,
-  },
-  description: {
-    fontSize: 14,
-    color: "#666666",
-    lineHeight: 20,
     marginBottom: 12,
   },
-  price: {
-    fontSize: 18,
-    color: "#86BC25",
-    fontWeight: "700",
-    marginBottom: 14,
+
+  description: {
+    color: "#666666",
+    fontSize: 16,
+    lineHeight: 24,
+    marginBottom: 18,
   },
+
+  price: {
+    color: "#6CAF1A",
+    fontSize: 24,
+    fontWeight: "700",
+    marginBottom: 18,
+  },
+
   button: {
     borderWidth: 1,
     borderColor: "#111111",
     borderRadius: 10,
-    paddingVertical: 11,
+    paddingVertical: 14,
     alignItems: "center",
   },
+
   buttonText: {
     color: "#111111",
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: "600",
   },
 });
