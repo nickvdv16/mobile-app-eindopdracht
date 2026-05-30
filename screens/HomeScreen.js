@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -6,8 +6,6 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
-  Button,
-  Switch,
   Image,
 } from "react-native";
 
@@ -16,72 +14,214 @@ import NewsCard from "../components/NewsCard.js";
 import CampusCard from "../components/CampusCard.js";
 
 const HomeScreen = ({ navigation }) => {
+  const API_TOKEN = "90676b2c8c33d03684a2724fe323fcca0de28c427e0faec060139a9135a0b248";
+
   const [selectedCampusFilter, setSelectedCampusFilter] =
     useState("Alle Opleidingen");
 
   const [selectedProductFilter, setSelectedProductFilter] =
     useState("Alle Producten");
 
-  const products = [
-    {
-      id: 1,
-      name: "BA Pennenzak",
-      description:
-        "Praktische pennenzak met BA-logo. Ruim genoeg voor al je pennen, potloden en schoolspullen.",
-      price: 8,
-      category: "Schoolaccessoires",
-      image:
-        "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200&auto=format&fit=crop",
-    },
-    {
-      id: 2,
-      name: "BA Sportzak",
-      description:
-        "Handige sportzak voor turnles, sportdagen en buitenschoolse activiteiten.",
-      price: 15,
-      category: "Tassen",
-      image:
-        "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=1200&auto=format&fit=crop",
-    },
-    {
-      id: 3,
-      name: "BA Drinkfles",
-      description:
-        "Herbruikbare drinkfles met BA-logo. Ideaal voor schooldagen en uitstappen.",
-      price: 10,
-      category: "Drinkflessen",
-      image:
-        "https://images.unsplash.com/photo-1602143407151-7111542de6e8?q=80&w=1200&auto=format&fit=crop",
-    },
-    {
-      id: 4,
-      name: "BA Hoodie",
-      description:
-        "Comfortabele hoodie met herkenbare BA-stijl. Perfect voor elke schooldag.",
-      price: 35,
-      category: "Kleding",
-      image:
-        "https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=1200&auto=format&fit=crop",
-    },
-    {
-      id: 5,
-      name: "BA Lunchbox",
-      description:
-        "Stevige lunchbox voor boterhammen, snacks en gezonde tussendoortjes.",
-      price: 12,
-      category: "Lunchmateriaal",
-      image:
-        "https://images.unsplash.com/photo-1604908554027-4b228b4f8b37?q=80&w=1200&auto=format&fit=crop",
-    },
-  ];
+  const [products, setProducts] = useState([]);
+  const [newsItems, setNewsItems] = useState([]);
+  const [campuses, setCampuses] = useState([]);
+
+  const productCategoryNames = {
+    "6a16edbec4c836a09c000068": "Schoolaccessoires",
+    "6a16edb1719f7ecaa2496566": "Tassen",
+    "6a16eda9aa667d8d7d51c9b5": "Lunchmateriaal",
+    "6a16ed9da36a49603175d088": "Drinkflessen",
+    "6a16ed8a070156fbb24b51de": "Kleding",
+  };
+
+  const campusFocusNames = {
+    "ee69cca064fa0c2dc2900f9ec85cc3ae": "Graduaat Basisverpleegkundige",
+    "1a7bbd0612936a87992c350ebb147fcc": "IT & Ondernemen",
+    "6792f93197f3ccf638e77f2d463ec33d": "Mens & Welzijn",
+    "b41305218572d14ad1c19aac688591c4": "Kennis & Onderzoek",
+    "763c43b453d521fdf9ca42a6f7cf2ea6": "Werken & Leren",
+    "088918bc60d43fe5ce5ffbcc957966a0": "Buiten-gewoon Leren",
+    "aa6dab0235f759127c984a87d9102165": "Integraal & Creatief",
+    "36154b2fdc3020da164ab18f4f6c6a01": "Gezondheid & Wetenschap",
+  };
+
+  const newsCategoryNames = {
+    "d15a0c045a3d650be7cec9d507ffce40": "Projecten",
+    "439ec26311937b626995ecfb6a150add": "Campussen",
+    "c733002c2a1e6431cf253c10f6b4518e": "Webshop",
+    "069209e397439ed0a86481983fed5137": "Activiteiten",
+    "4dd5d208d91304d8daed798e8e5db98d": "Infodag",
+  };
+
+  useEffect(() => {
+    fetchProducts();
+    fetchNews();
+    fetchCampuses();
+  }, []);
+
+  const checkResponse = async (response) => {
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.log("WEBFLOW API ERROR:", data);
+      throw new Error(`API error: ${response.status}`);
+    }
+
+    return data;
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) {
+      return "";
+    }
+
+    const date = new Date(dateString);
+
+    return date.toLocaleDateString("nl-BE", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  };
+
+  const fetchProducts = () => {
+    Promise.all([
+      fetch(
+        "https://api.webflow.com/v2/collections/6a16ed421817ffd033eddcdd/items",
+        {
+          headers: {
+            Authorization: `Bearer ${API_TOKEN}`,
+          },
+        }
+      ).then(checkResponse),
+
+      fetch(
+        "https://api.webflow.com/v2/collections/6a16ed421817ffd033eddcdc/items",
+        {
+          headers: {
+            Authorization: `Bearer ${API_TOKEN}`,
+          },
+        }
+      ).then(checkResponse),
+    ])
+      .then(([productsData, skusData]) => {
+        const productItems = productsData.items || [];
+        const skuItems = skusData.items || [];
+
+        const formattedProducts = productItems.map((product) => {
+          const sku = skuItems.find(
+            (skuItem) => skuItem.id === product.fieldData["default-sku"]
+          );
+
+          const categoryId = product.fieldData.category?.[0];
+          const categoryName =
+            productCategoryNames[categoryId] || "Geen categorie";
+
+          return {
+            id: product.id,
+            name: product.fieldData.name,
+            description: product.fieldData.description,
+            category: categoryName,
+            price: sku?.fieldData.price?.value
+              ? sku.fieldData.price.value / 100
+              : 0,
+            image: sku?.fieldData["main-image"]?.url,
+            slug: product.fieldData.slug,
+          };
+        });
+
+        setProducts(formattedProducts);
+      })
+      .catch((error) => {
+        console.error("Fout bij ophalen producten:", error.message);
+      });
+  };
+
+  const fetchNews = () => {
+    fetch(
+      "https://api.webflow.com/v2/collections/6a173b0e9f26e0be248049ba/items",
+      {
+        headers: {
+          Authorization: `Bearer ${API_TOKEN}`,
+        },
+      }
+    )
+      .then(checkResponse)
+      .then((data) => {
+        const newsItemsFromApi = data.items || [];
+
+        const formattedNews = newsItemsFromApi.map((item) => {
+          const categoryId = item.fieldData.categories;
+          const categoryName =
+            newsCategoryNames[categoryId] || "Geen categorie";
+
+          return {
+            id: item.id,
+            title: item.fieldData.name,
+            intro: item.fieldData.intro,
+            image: item.fieldData.image?.url,
+            date: formatDate(item.fieldData.datum),
+            rawDate: item.fieldData.datum,
+            category: categoryName,
+            author: item.fieldData["autheur-naam"],
+            authorImage: item.fieldData["autheur-foto"]?.url,
+            content: item.fieldData["inhoud-uitgebreid"],
+            htmlContent: item.fieldData.inhoud,
+            slug: item.fieldData.slug,
+          };
+        });
+
+        setNewsItems(formattedNews);
+      })
+      .catch((error) => {
+        console.error("Fout bij ophalen nieuws:", error.message);
+      });
+  };
+
+  const fetchCampuses = () => {
+    fetch(
+      "https://api.webflow.com/v2/collections/6a174087ad7992cf1fc9992a/items",
+      {
+        headers: {
+          Authorization: `Bearer ${API_TOKEN}`,
+        },
+      }
+    )
+      .then(checkResponse)
+      .then((data) => {
+        const campusItemsFromApi = data.items || [];
+
+        const formattedCampuses = campusItemsFromApi.map((item) => {
+          const focusId = item.fieldData["focus-2"];
+          const focusName = campusFocusNames[focusId] || "Geen opleiding";
+
+          return {
+            id: item.id,
+            name: item.fieldData.campus,
+            focus: focusName,
+            category: focusName,
+            description: item.fieldData.intro,
+            address: `${item.fieldData.adres}\n${item.fieldData.postcode}`,
+            color: item.fieldData["campus-color"],
+            image: item.fieldData.image?.url,
+            email: item.fieldData.email,
+            phone: item.fieldData.phone,
+            map: item.fieldData.map?.url,
+            content: item.fieldData["beschrijving-campus"],
+            slug: item.fieldData.slug,
+          };
+        });
+
+        setCampuses(formattedCampuses);
+      })
+      .catch((error) => {
+        console.error("Fout bij ophalen campussen:", error.message);
+      });
+  };
 
   const productFilters = [
     "Alle Producten",
-    "Kleding",
-    "Drinkflessen",
-    "Lunchmateriaal",
-    "Tassen",
-    "Schoolaccessoires",
+    ...new Set(products.map((product) => product.category).filter(Boolean)),
   ];
 
   const filteredProducts = products
@@ -94,157 +234,13 @@ const HomeScreen = ({ navigation }) => {
     })
     .slice(0, 4);
 
-  const newsItems = [
-    {
-      id: 1,
-      title: "STEM-project op BA Pitzemburg",
-      intro:
-        "Leerlingen van BA Pitzemburg werkten samen aan een creatief STEM-project waarin techniek, wetenschap en probleemoplossend denken centraal stonden.",
-      category: "Projecten",
-      author: "Alex Vermeulen",
-      date: "2026-04-18",
-      image:
-        "https://images.unsplash.com/photo-1495020689067-958852a7765e?q=80&w=1200&auto=format&fit=crop",
-    },
-    {
-      id: 2,
-      title: "Infodag op 4 mei",
-      intro:
-        "Bezoek onze campussen en ontdek alle studierichtingen tijdens onze infodag.",
-      category: "Infodag",
-      author: "Alex Vermeulen",
-      date: "2026-05-04",
-      image:
-        "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=1200&auto=format&fit=crop",
-    },
-    {
-      id: 3,
-      title: "Projectweek rond gezondheid en wetenschap",
-      intro:
-        "Tijdens een interactieve projectweek onderzochten leerlingen thema’s rond gezondheid, wetenschap en welzijn.",
-      category: "Projecten",
-      author: "Alex Vermeulen",
-      date: "2026-05-27",
-      image:
-        "https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=1200&auto=format&fit=crop",
-    },
-    {
-      id: 4,
-      title: "Nieuwe collectie in de BA Webshop",
-      intro:
-        "De BA Webshop kreeg een nieuwe collectie met hoodies, drinkflessen, lunchboxen en andere schoolartikelen.",
-      category: "Schoolnieuws",
-      author: "Alex Vermeulen",
-      date: "2026-03-12",
-      image:
-        "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200&auto=format&fit=crop",
-    },
-  ];
-
   const latestNews = [...newsItems]
-    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .sort((a, b) => new Date(b.rawDate) - new Date(a.rawDate))
     .slice(0, 3);
-
-  const campuses = [
-    {
-      id: 1,
-      name: "Basisverpleegkundige",
-      focus: "Graduaat Basisverpleegkundige",
-      category: "Graduaat Basisverpleegkundige",
-      description: "Bij BA Botaniek draait alles rond GEZONDHEID & WETENSCHAP.",
-      address: "Laarbeeklaan 121\n1090 Jette",
-      color: "#E85597",
-    },
-    {
-      id: 2,
-      name: "Caputsteen",
-      focus: "Integraal & Creatief",
-      category: "Integraal & Creatief",
-      description:
-        "Bij BA Caputsteen draait alles rond integraal en creatief leren.",
-      address: "Caputsteenstraat 51\n2800 Mechelen",
-      color: "#1F62A9",
-    },
-    {
-      id: 3,
-      name: "Botaniek",
-      focus: "Gezondheid & Wetenschap",
-      category: "Gezondheid & Wetenschap",
-      description:
-        "Bij BA Botaniek draait alles rond gezondheid en wetenschap.",
-      address: "Augustijnenstraat 92\n2800 Mechelen",
-      color: "#E85597",
-    },
-    {
-      id: 4,
-      name: "De Beemden",
-      focus: "Buiten-gewoon Leren",
-      category: "Buiten-gewoon Leren",
-      description: "Bij BA De Beemden staat buiten-gewoon leren centraal.",
-      address: "Stuivenbergbaan 135\n2800 Mechelen",
-      color: "#1CAFC8",
-    },
-    {
-      id: 5,
-      name: "Nekkerspoel",
-      focus: "Werken & Leren",
-      category: "Werken & Leren",
-      description:
-        "Bij BA Nekkerspoel combineer je leren op school met praktijkervaring.",
-      address: "Nekkerspoelstraat 74\n2800 Mechelen",
-      color: "#C6C334",
-    },
-    {
-      id: 6,
-      name: "Pitzemburg",
-      focus: "Kennis & Onderzoek",
-      category: "Kennis & Onderzoek",
-      description:
-        "Bij BA Pitzemburg staan kennis, onderzoek en verdieping centraal.",
-      address: "Bruul 129\n2800 Mechelen",
-      color: "#A6398A",
-    },
-    {
-      id: 7,
-      name: "Stassart",
-      focus: "Mens & Welzijn",
-      category: "Mens & Welzijn",
-      description: "Bij BA Stassart draait alles rond mens, zorg en welzijn.",
-      address: "Wollemarkt 36\n2800 Mechelen",
-      color: "#F5A529",
-    },
-    {
-      id: 8,
-      name: "Zandpoort",
-      focus: "IT & Ondernemen",
-      category: "IT & Ondernemen",
-      description:
-        "Bij BA Zandpoort staan technologie, ondernemen en innovatie centraal.",
-      address: "Zandpoortvest 9A\n2800 Mechelen",
-      color: "#E4342D",
-    },
-    {
-      id: 9,
-      name: "Pitzemburg Tweedegraad",
-      focus: "Kennis & Onderzoek",
-      category: "Kennis & Onderzoek",
-      description:
-        "Een campus met focus op sterke basisvorming en onderzoekend leren.",
-      address: "2800 Mechelen",
-      color: "#A6398A",
-    },
-  ];
 
   const campusFilters = [
     "Alle Opleidingen",
-    "Graduaat Basisverpleegkundige",
-    "IT & Ondernemen",
-    "Mens & Welzijn",
-    "Kennis & Onderzoek",
-    "Werken & Leren",
-    "Buiten-gewoon Leren",
-    "Integraal & Creatief",
-    "Gezondheid & Wetenschap",
+    ...new Set(campuses.map((campus) => campus.category).filter(Boolean)),
   ];
 
   const filteredCampuses = campuses.filter((campus) => {
