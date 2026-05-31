@@ -95,7 +95,7 @@ const AppHeader = ({ navigation, logoSource }) => {
             ]}
             onPress={() => {
               setMenuOpen(false);
-              navigation.navigate("Game");
+              navigation.navigate("Quick Maths");
             }}
           >
             <Text
