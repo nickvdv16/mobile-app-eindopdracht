@@ -6,10 +6,12 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
+  Button,
 } from "react-native";
 
 import ProductCard from "../components/ProductCard.js";
 import AppHeader from "../components/AppHeader.js";
+import AppFooter from "../components/AppFooter.js";
 
 const ProductDetailsScreen = ({ route, navigation }) => {
   const API_TOKEN =
@@ -19,6 +21,7 @@ const ProductDetailsScreen = ({ route, navigation }) => {
 
   const [quantity, setQuantity] = useState(1);
   const [relatedProducts, setRelatedProducts] = useState([]);
+  const [cartAmount, setCartAmount] = useState(0);
 
   const productCategoryNames = {
     "6a16edbec4c836a09c000068": "Schoolaccessoires",
@@ -55,6 +58,23 @@ const ProductDetailsScreen = ({ route, navigation }) => {
   };
 
   const totalPrice = product.price * quantity;
+
+  const addToCart = () => {
+    setCartAmount(cartAmount + quantity);
+
+    console.log("Product toegevoegd aan winkelmandje:", {
+      product: product.name,
+      quantity: quantity,
+      totalPrice: totalPrice,
+    });
+
+    setQuantity(1);
+  };
+
+  const clearCart = () => {
+    setCartAmount(0);
+    console.log("Winkelmandje leeggemaakt");
+  };
 
   const fetchRelatedProducts = () => {
     Promise.all([
@@ -126,9 +146,16 @@ const ProductDetailsScreen = ({ route, navigation }) => {
     <ScrollView style={styles.page}>
       <AppHeader navigation={navigation} />
 
-      <View style={styles.cartRow}>
-        <TouchableOpacity style={styles.cartButton}>
-          <Text style={styles.cartText}>Cart</Text>
+      <View style={styles.topActionRow}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
+          <Text style={styles.backButtonText}>Terug</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.cartButton} onPress={clearCart}>
+          <Text style={styles.cartText}>Cart ({cartAmount})</Text>
         </TouchableOpacity>
       </View>
 
@@ -185,9 +212,9 @@ const ProductDetailsScreen = ({ route, navigation }) => {
           </Text>
         </View>
 
-        <TouchableOpacity style={styles.addButton}>
-          <Text style={styles.addButtonText}>Add to Cart</Text>
-        </TouchableOpacity>
+        <View style={styles.addButton}>
+          <Button title="Add to Cart" color="#86BC25" onPress={addToCart} />
+        </View>
       </View>
 
       <View style={styles.relatedSection}>
@@ -205,6 +232,8 @@ const ProductDetailsScreen = ({ route, navigation }) => {
           />
         ))}
       </View>
+
+      <AppFooter />
     </ScrollView>
   );
 };
@@ -215,12 +244,25 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
   },
 
-  cartRow: {
+  topActionRow: {
     backgroundColor: "#ffffff",
     paddingHorizontal: 24,
-    alignItems: "flex-end",
     paddingTop: 16,
-    paddingBottom: 50,
+    paddingBottom: 40,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+
+  backButton: {
+    paddingVertical: 13,
+    paddingHorizontal: 0,
+  },
+
+  backButtonText: {
+    color: "#111111",
+    fontSize: 16,
+    fontWeight: "700",
   },
 
   cartButton: {
@@ -352,16 +394,9 @@ const styles = StyleSheet.create({
   },
 
   addButton: {
-    backgroundColor: "#86BC25",
-    paddingVertical: 13,
-    paddingHorizontal: 18,
     alignSelf: "flex-start",
-  },
-
-  addButtonText: {
-    color: "#ffffff",
-    fontSize: 16,
-    fontWeight: "700",
+    borderRadius: 6,
+    overflow: "hidden",
   },
 
   relatedSection: {

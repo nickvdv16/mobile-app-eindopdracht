@@ -1,30 +1,23 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, Image, View } from "react-native";
 
 const NewsCard = ({ image, title, intro, category, author, date, onPress }) => {
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress}>
-      <Image source={{ uri: image }} style={styles.image} />
+    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.8}>
+      {image && (
+        <Image
+          source={{ uri: image }}
+          style={styles.image}
+          resizeMode="cover"
+        />
+      )}
 
       <View style={styles.content}>
         <Text style={styles.category}>{category}</Text>
-
         <Text style={styles.title}>{title}</Text>
-
         <Text style={styles.intro}>{intro}</Text>
-
-        <View style={styles.authorRow}>
-          <View style={styles.authorCircle}>
-            <Text style={styles.authorInitial}>
-              {author ? author.charAt(0) : "A"}
-            </Text>
-          </View>
-
-          <View>
-            <Text style={styles.author}>{author}</Text>
-            <Text style={styles.date}>{date}</Text>
-          </View>
-        </View>
+        <Text style={styles.meta}>{author}</Text>
+        <Text style={styles.meta}>{date}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -32,72 +25,56 @@ const NewsCard = ({ image, title, intro, category, author, date, onPress }) => {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#ffffff",
+    backgroundColor: "white",
+    marginBottom: 24,
     borderRadius: 16,
-    marginBottom: 18,
     overflow: "hidden",
     borderWidth: 1,
     borderColor: "#e5e5e5",
+    shadowColor: "#000000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
+    elevation: 5,
   },
+
   image: {
     width: "100%",
-    height: 170,
-    resizeMode: "cover",
+    height: 200,
   },
+
   content: {
-    padding: 16,
+    padding: 20,
   },
+
   category: {
-    alignSelf: "flex-start",
-    backgroundColor: "#f0f0f0",
-    color: "#111111",
-    fontSize: 11,
-    fontWeight: "700",
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 12,
-    marginBottom: 10,
-    textTransform: "uppercase",
-  },
-  title: {
-    fontSize: 19,
-    color: "#111111",
-    fontWeight: "700",
-    marginBottom: 8,
-  },
-  intro: {
+    color: "#000000",
     fontSize: 14,
-    color: "#555555",
-    lineHeight: 20,
-    marginBottom: 16,
+    fontWeight: "800",
+    marginBottom: 10,
   },
-  authorRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 4,
+
+  title: {
+    color: "#000000",
+    fontSize: 24,
+    fontWeight: "800",
+    marginBottom: 10,
   },
-  authorCircle: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    backgroundColor: "#86BC25",
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 10,
+
+  intro: {
+    color: "#000000",
+    fontSize: 16,
+    lineHeight: 24,
+    marginBottom: 14,
   },
-  authorInitial: {
-    color: "#ffffff",
-    fontWeight: "700",
-  },
-  author: {
-    fontSize: 13,
-    color: "#111111",
+
+  meta: {
+    color: "#000000",
+    fontSize: 14,
     fontWeight: "600",
-  },
-  date: {
-    fontSize: 12,
-    color: "#666666",
-    marginTop: 2,
   },
 });
 

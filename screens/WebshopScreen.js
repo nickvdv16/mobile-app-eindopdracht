@@ -10,6 +10,7 @@ import {
 
 import ProductCard from "../components/ProductCard.js";
 import AppHeader from "../components/AppHeader.js";
+import AppFooter from "../components/AppFooter.js";
 
 const WebshopScreen = ({ navigation }) => {
   const API_TOKEN =
@@ -234,6 +235,8 @@ const WebshopScreen = ({ navigation }) => {
           />
         ))}
       </View>
+
+      <AppFooter />
     </ScrollView>
   );
 };

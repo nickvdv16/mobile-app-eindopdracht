@@ -28,19 +28,19 @@ export default function App() {
         <Stack.Screen
           name="ProductDetails"
           component={ProductDetailsScreen}
-          options={{ title: "Product details" }}
+          options={{ headerShown: false }}
         />
 
         <Stack.Screen
           name="NewsDetails"
           component={NewsDetailsScreen}
-          options={{ title: "News details" }}
+          options={{ headerShown: false }}
         />
 
         <Stack.Screen
           name="CampusDetails"
           component={CampusDetailsScreen}
-          options={{ title: "Campus details" }}
+          options={{ headerShown: false }}
         />
       </Stack.Navigator>
     </NavigationContainer>
