@@ -13,39 +13,21 @@ import ProductCard from "../components/ProductCard.js";
 import AppHeader from "../components/AppHeader.js";
 import AppFooter from "../components/AppFooter.js";
 
-const ProductDetailsScreen = ({ route, navigation }) => {
-  const API_TOKEN =
-    "90676b2c8c33d03684a2724fe323fcca0de28c427e0faec060139a9135a0b248";
+import { API_TOKEN, WEBFLOW_COLLECTIONS } from "../config/webflow.js";
+import { productCategoryNames } from "../constants/categories.js";
+import { checkResponse } from "../utils/apiHelpers.js";
 
+const ProductDetailsScreen = ({ route, navigation }) => {
   const product = route.params;
 
   const [quantity, setQuantity] = useState(1);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [cartAmount, setCartAmount] = useState(0);
 
-  const productCategoryNames = {
-    "6a16edbec4c836a09c000068": "Schoolaccessoires",
-    "6a16edb1719f7ecaa2496566": "Tassen",
-    "6a16eda9aa667d8d7d51c9b5": "Lunchmateriaal",
-    "6a16ed9da36a49603175d088": "Drinkflessen",
-    "6a16ed8a070156fbb24b51de": "Kleding",
-  };
-
   useEffect(() => {
     setQuantity(1);
     fetchRelatedProducts();
   }, [product.id]);
-
-  const checkResponse = async (response) => {
-    const data = await response.json();
-
-    if (!response.ok) {
-      console.log("WEBFLOW API ERROR:", data);
-      throw new Error(`API error: ${response.status}`);
-    }
-
-    return data;
-  };
 
   const decreaseQuantity = () => {
     if (quantity > 1) {
@@ -60,7 +42,7 @@ const ProductDetailsScreen = ({ route, navigation }) => {
   const totalPrice = product.price * quantity;
 
   const addToCart = () => {
-    setCartAmount(cartAmount + quantity);
+    setCartAmount((previousAmount) => previousAmount + quantity);
 
     console.log("Product toegevoegd aan winkelmandje:", {
       product: product.name,
@@ -78,23 +60,17 @@ const ProductDetailsScreen = ({ route, navigation }) => {
 
   const fetchRelatedProducts = () => {
     Promise.all([
-      fetch(
-        "https://api.webflow.com/v2/collections/6a16ed421817ffd033eddcdd/items",
-        {
-          headers: {
-            Authorization: `Bearer ${API_TOKEN}`,
-          },
-        }
-      ).then(checkResponse),
+      fetch(WEBFLOW_COLLECTIONS.products, {
+        headers: {
+          Authorization: `Bearer ${API_TOKEN}`,
+        },
+      }).then(checkResponse),
 
-      fetch(
-        "https://api.webflow.com/v2/collections/6a16ed421817ffd033eddcdc/items",
-        {
-          headers: {
-            Authorization: `Bearer ${API_TOKEN}`,
-          },
-        }
-      ).then(checkResponse),
+      fetch(WEBFLOW_COLLECTIONS.skus, {
+        headers: {
+          Authorization: `Bearer ${API_TOKEN}`,
+        },
+      }).then(checkResponse),
     ])
       .then(([productsData, skusData]) => {
         const productItems = productsData.items || [];

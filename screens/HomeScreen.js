@@ -14,10 +14,15 @@ import CampusCard from "../components/CampusCard.js";
 import AppHeader from "../components/AppHeader.js";
 import AppFooter from "../components/AppFooter.js";
 
-const HomeScreen = ({ navigation }) => {
-  const API_TOKEN =
-    "90676b2c8c33d03684a2724fe323fcca0de28c427e0faec060139a9135a0b248";
+import { API_TOKEN, WEBFLOW_COLLECTIONS } from "../config/webflow.js";
+import {
+  productCategoryNames,
+  campusFocusNames,
+  newsCategoryNames,
+} from "../constants/categories.js";
+import { checkResponse, formatDate } from "../utils/apiHelpers.js";
 
+const HomeScreen = ({ navigation }) => {
   const [selectedCampusFilter, setSelectedCampusFilter] =
     useState("Alle Opleidingen");
 
@@ -28,83 +33,25 @@ const HomeScreen = ({ navigation }) => {
   const [newsItems, setNewsItems] = useState([]);
   const [campuses, setCampuses] = useState([]);
 
-  const productCategoryNames = {
-    "6a16edbec4c836a09c000068": "Schoolaccessoires",
-    "6a16edb1719f7ecaa2496566": "Tassen",
-    "6a16eda9aa667d8d7d51c9b5": "Lunchmateriaal",
-    "6a16ed9da36a49603175d088": "Drinkflessen",
-    "6a16ed8a070156fbb24b51de": "Kleding",
-  };
-
-  const campusFocusNames = {
-    "ee69cca064fa0c2dc2900f9ec85cc3ae": "Graduaat Basisverpleegkundige",
-    "1a7bbd0612936a87992c350ebb147fcc": "IT & Ondernemen",
-    "6792f93197f3ccf638e77f2d463ec33d": "Mens & Welzijn",
-    "b41305218572d14ad1c19aac688591c4": "Kennis & Onderzoek",
-    "763c43b453d521fdf9ca42a6f7cf2ea6": "Werken & Leren",
-    "088918bc60d43fe5ce5ffbcc957966a0": "Buiten-gewoon Leren",
-    "aa6dab0235f759127c984a87d9102165": "Integraal & Creatief",
-    "36154b2fdc3020da164ab18f4f6c6a01": "Gezondheid & Wetenschap",
-  };
-
-  const newsCategoryNames = {
-    "d15a0c045a3d650be7cec9d507ffce40": "Projecten",
-    "439ec26311937b626995ecfb6a150add": "Campussen",
-    "c733002c2a1e6431cf253c10f6b4518e": "Webshop",
-    "069209e397439ed0a86481983fed5137": "Activiteiten",
-    "4dd5d208d91304d8daed798e8e5db98d": "Infodag",
-  };
-
   useEffect(() => {
     fetchProducts();
     fetchNews();
     fetchCampuses();
   }, []);
 
-  const checkResponse = async (response) => {
-    const data = await response.json();
-
-    if (!response.ok) {
-      console.log("WEBFLOW API ERROR:", data);
-      throw new Error(`API error: ${response.status}`);
-    }
-
-    return data;
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) {
-      return "";
-    }
-
-    const date = new Date(dateString);
-
-    return date.toLocaleDateString("nl-BE", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-  };
-
   const fetchProducts = () => {
     Promise.all([
-      fetch(
-        "https://api.webflow.com/v2/collections/6a16ed421817ffd033eddcdd/items",
-        {
-          headers: {
-            Authorization: `Bearer ${API_TOKEN}`,
-          },
-        }
-      ).then(checkResponse),
+      fetch(WEBFLOW_COLLECTIONS.products, {
+        headers: {
+          Authorization: `Bearer ${API_TOKEN}`,
+        },
+      }).then(checkResponse),
 
-      fetch(
-        "https://api.webflow.com/v2/collections/6a16ed421817ffd033eddcdc/items",
-        {
-          headers: {
-            Authorization: `Bearer ${API_TOKEN}`,
-          },
-        }
-      ).then(checkResponse),
+      fetch(WEBFLOW_COLLECTIONS.skus, {
+        headers: {
+          Authorization: `Bearer ${API_TOKEN}`,
+        },
+      }).then(checkResponse),
     ])
       .then(([productsData, skusData]) => {
         const productItems = productsData.items || [];
@@ -140,14 +87,11 @@ const HomeScreen = ({ navigation }) => {
   };
 
   const fetchNews = () => {
-    fetch(
-      "https://api.webflow.com/v2/collections/6a173b0e9f26e0be248049ba/items",
-      {
-        headers: {
-          Authorization: `Bearer ${API_TOKEN}`,
-        },
-      }
-    )
+    fetch(WEBFLOW_COLLECTIONS.news, {
+      headers: {
+        Authorization: `Bearer ${API_TOKEN}`,
+      },
+    })
       .then(checkResponse)
       .then((data) => {
         const newsItemsFromApi = data.items || [];
@@ -181,14 +125,11 @@ const HomeScreen = ({ navigation }) => {
   };
 
   const fetchCampuses = () => {
-    fetch(
-      "https://api.webflow.com/v2/collections/6a174087ad7992cf1fc9992a/items",
-      {
-        headers: {
-          Authorization: `Bearer ${API_TOKEN}`,
-        },
-      }
-    )
+    fetch(WEBFLOW_COLLECTIONS.campuses, {
+      headers: {
+        Authorization: `Bearer ${API_TOKEN}`,
+      },
+    })
       .then(checkResponse)
       .then((data) => {
         const campusItemsFromApi = data.items || [];

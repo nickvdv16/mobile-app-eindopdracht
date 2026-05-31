@@ -12,6 +12,10 @@ import AppHeader from "../components/AppHeader.js";
 import AppFooter from "../components/AppFooter.js";
 import NewsCard from "../components/NewsCard.js";
 
+import { API_TOKEN, WEBFLOW_COLLECTIONS } from "../config/webflow.js";
+import { newsCategoryNames } from "../constants/categories.js";
+import { checkResponse, formatDate } from "../utils/apiHelpers.js";
+
 const hexToRgba = (hex, opacity) => {
   if (!hex) {
     return `rgba(134, 188, 37, ${opacity})`;
@@ -27,9 +31,6 @@ const hexToRgba = (hex, opacity) => {
 };
 
 const CampusDetailsScreen = ({ route, navigation }) => {
-  const API_TOKEN =
-    "90676b2c8c33d03684a2724fe323fcca0de28c427e0faec060139a9135a0b248";
-
   const campus = route.params;
   const campusColor = campus.color || "#86BC25";
   const campusLightColor = hexToRgba(campusColor, 0.12);
@@ -86,52 +87,16 @@ const CampusDetailsScreen = ({ route, navigation }) => {
     return require("../assets/ba-logo.png");
   };
 
-  const newsCategoryNames = {
-    "d15a0c045a3d650be7cec9d507ffce40": "Projecten",
-    "439ec26311937b626995ecfb6a150add": "Campussen",
-    "c733002c2a1e6431cf253c10f6b4518e": "Webshop",
-    "069209e397439ed0a86481983fed5137": "Activiteiten",
-    "4dd5d208d91304d8daed798e8e5db98d": "Infodag",
-  };
-
   useEffect(() => {
     fetchNews();
   }, []);
 
-  const checkResponse = async (response) => {
-    const data = await response.json();
-
-    if (!response.ok) {
-      console.log("WEBFLOW API ERROR:", data);
-      throw new Error(`API error: ${response.status}`);
-    }
-
-    return data;
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) {
-      return "";
-    }
-
-    const date = new Date(dateString);
-
-    return date.toLocaleDateString("nl-BE", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-  };
-
   const fetchNews = () => {
-    fetch(
-      "https://api.webflow.com/v2/collections/6a173b0e9f26e0be248049ba/items",
-      {
-        headers: {
-          Authorization: `Bearer ${API_TOKEN}`,
-        },
-      }
-    )
+    fetch(WEBFLOW_COLLECTIONS.news, {
+      headers: {
+        Authorization: `Bearer ${API_TOKEN}`,
+      },
+    })
       .then(checkResponse)
       .then((data) => {
         const newsItemsFromApi = data.items || [];
