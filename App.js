@@ -6,6 +6,7 @@ import WebshopScreen from "./screens/WebshopScreen.js";
 import ProductDetailsScreen from "./screens/ProductDetailsScreen.js";
 import NewsDetailsScreen from "./screens/NewsDetailsScreen.js";
 import CampusDetailsScreen from "./screens/CampusDetailsScreen.js";
+import GameScreen from "./screens/GameScreen.js";
 
 const Stack = createNativeStackNavigator();
 
@@ -40,6 +41,12 @@ export default function App() {
         <Stack.Screen
           name="CampusDetails"
           component={CampusDetailsScreen}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="Game"
+          component={GameScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

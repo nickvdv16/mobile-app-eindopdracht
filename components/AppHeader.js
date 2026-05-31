@@ -88,6 +88,26 @@ const AppHeader = ({ navigation, logoSource }) => {
             </Text>
           </TouchableOpacity>
 
+          <TouchableOpacity
+            style={[
+              styles.dropdownItem,
+              darkMode ? styles.dropdownItemDark : styles.dropdownItemLight,
+            ]}
+            onPress={() => {
+              setMenuOpen(false);
+              navigation.navigate("Game");
+            }}
+          >
+            <Text
+              style={[
+                styles.dropdownText,
+                darkMode ? styles.dropdownTextDark : styles.dropdownTextLight,
+              ]}
+            >
+              Mini-game
+            </Text>
+          </TouchableOpacity>
+
           <View
             style={[
               styles.switchItem,
@@ -109,7 +129,9 @@ const AppHeader = ({ navigation, logoSource }) => {
               <Text
                 style={[
                   styles.switchSubText,
-                  darkMode ? styles.switchSubTextDark : styles.switchSubTextLight,
+                  darkMode
+                    ? styles.switchSubTextDark
+                    : styles.switchSubTextLight,
                 ]}
               >
                 Wissel tussen licht en donker
