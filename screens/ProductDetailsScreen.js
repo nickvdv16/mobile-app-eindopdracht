@@ -55,7 +55,7 @@ const ProductDetailsScreen = ({ route, navigation }) => {
 
   const clearCart = () => {
     setCartAmount(0);
-    console.log("Winkelmandje leeggemaakt");
+    console.log("Winkelmandje volledig leeggemaakt");
   };
 
   const fetchRelatedProducts = () => {
