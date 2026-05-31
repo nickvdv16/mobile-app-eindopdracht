@@ -235,9 +235,7 @@ const HomeScreen = ({ navigation }) => {
         </View>
 
         <Image
-          source={{
-            uri: "https://images.unsplash.com/photo-1562774053-701939374585?q=80&w=1200&auto=format&fit=crop",
-          }}
+            source={require("../assets/HeroImage.avif")}
           style={styles.heroImage}
         />
       </View>
@@ -251,9 +249,8 @@ const HomeScreen = ({ navigation }) => {
 
         <View style={styles.infoBlock}>
           <Image
-            source={{
-              uri: "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=1200&auto=format&fit=crop",
-            }}
+            source={
+              require("../assets/Studiekeuzes.avif")}
             style={styles.infoImage}
           />
 
@@ -271,9 +268,8 @@ const HomeScreen = ({ navigation }) => {
 
         <View style={styles.infoBlock}>
           <Image
-            source={{
-              uri: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?q=80&w=1200&auto=format&fit=crop",
-            }}
+            source={
+              require("../assets/Campussen.avif")}
             style={styles.infoImage}
           />
 
@@ -290,10 +286,9 @@ const HomeScreen = ({ navigation }) => {
         </View>
 
         <View style={styles.infoBlock}>
-          <Image
-            source={{
-              uri: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=1200&auto=format&fit=crop",
-            }}
+        <Image
+            source={
+              require("../assets/OpMaat.avif")}
             style={styles.infoImage}
           />
 
@@ -365,30 +360,26 @@ const HomeScreen = ({ navigation }) => {
         </Text>
 
         <Image
-          source={{
-            uri: "https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=1200&auto=format&fit=crop",
-          }}
+          source={
+            require("../assets/Sfeer1.avif")}
           style={styles.galleryImage}
         />
 
         <Image
-          source={{
-            uri: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=1200&auto=format&fit=crop",
-          }}
+          source={
+            require("../assets/Sfeer2.avif")}
           style={styles.galleryImage}
         />
 
         <Image
-          source={{
-            uri: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=1200&auto=format&fit=crop",
-          }}
+          source={
+            require("../assets/Sfeer3.avif")}
           style={styles.galleryImage}
         />
 
         <Image
-          source={{
-            uri: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?q=80&w=1200&auto=format&fit=crop",
-          }}
+          source={
+            require("../assets/Sfeer4.avif")}
           style={styles.galleryImage}
         />
       </View>
